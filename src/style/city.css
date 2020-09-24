@@ -1,0 +1,9 @@
+.city_full__title {
+    font-weight: bold;
+    font-size: 40px;
+}
+
+.city_full__flex {
+    display: flex;
+    justify-content: space-between;
+}

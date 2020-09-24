@@ -1,0 +1,8 @@
+.block_main {
+    display: flex;
+    justify-content: space-between;
+}
+
+.block_main__right, .block_main__left {
+    width: calc(50% - 25px);
+}

@@ -1,0 +1,16 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header__title {
+    font-size: 36px;
+}
+
+.header__refresh {
+    outline: none;
+    border: none;
+    background: #dae2ea;
+    color: #55677d;
+    border-radius: 5px;
+}

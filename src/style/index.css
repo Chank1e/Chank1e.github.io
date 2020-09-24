@@ -1,0 +1,27 @@
+@import 'header.css';
+@import 'block.css';
+@import 'city.css';
+@import 'stats.css';
+@import 'grid.css';
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    color: #697F8A;
+}
+
+.wrapper {
+    width: 75%;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+}
+
+@media only screen and (max-width: 1199px) {
+    .wrapper {
+        width: 100%;
+    }
+}
