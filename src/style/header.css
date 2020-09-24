@@ -8,11 +8,31 @@
 }
 
 .header__refresh {
+    cursor: pointer;
     outline: none;
     border: none;
     background: #dae2ea;
-    color: #55677d;
-    padding: 0 3rem;
-    line-height: 1;
     border-radius: 5px;
+    padding: 0 3rem;
+}
+
+.header__refresh::before {
+    content: 'Обновить геолокацию';
+    line-height: 1;
+    color: #55677d;
+}
+
+@media only screen and (max-width: 1099px) {
+    .header__refresh {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .header__refresh::before {
+        content: '';
+        height: 32px;
+        width: 32px;
+        background: url('../img/refresh.png');
+        background-size: contain;
+    }
 }
