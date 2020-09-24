@@ -243,12 +243,15 @@ async function onBtnAddClick() {
         saveCityToLS(data.id)
         state.starred = [...state.starred, weatherMapper(data)]
     } catch(err) {
+        state.starred.pop()
+        state.starred = [...state.starred]
         alert('Ошибочка(')
         console.error(err)
     }
     inputAdd.disabled = false
     inputAdd.value = ''
 }
+
 function onRemoveClick(id) {
     console.log(id)
     state.starred = state.starred.filter(_=>_.id !== parseInt(id, 10))
