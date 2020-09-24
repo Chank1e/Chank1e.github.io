@@ -6,3 +6,35 @@
 .block_main__right, .block_main__left {
     width: calc(50% - 25px);
 }
+
+.block_extra__wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.block_extra__wrapper>.block.block_extra {
+    flex: 0 calc(50% - 25px);
+    /*demo*/
+    box-sizing:border-box;
+}
+.block_extra__wrapper>.block.block_extra:nth-child(2n) {
+    margin-left: 50px;
+}
+
+
+@media only screen and (max-width: 1099px) {
+    .block_extra__wrapper>.block.block_extra {
+        flex: 0 100%;
+        /*demo*/
+        box-sizing:border-box;
+    }
+    .block_extra__wrapper>.block.block_extra:nth-child(2n) {
+        margin-left: 0;
+    }
+    .block_main {
+        flex-direction: column;
+    }
+    .block_main__right, .block_main__left {
+        width: 100%;
+    }
+}

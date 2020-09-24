@@ -3,6 +3,8 @@
 @import 'city.css';
 @import 'stats.css';
 @import 'grid.css';
+@import 'input.css';
+@import 'helpers.css';
 
 * {
     box-sizing: border-box;

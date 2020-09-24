@@ -12,5 +12,7 @@
     border: none;
     background: #dae2ea;
     color: #55677d;
+    padding: 0 3rem;
+    line-height: 1;
     border-radius: 5px;
 }

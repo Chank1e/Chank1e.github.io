@@ -1,0 +1,18 @@
+.stats__block {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: #a7afb1;
+    border-radius: 5px;
+}
+.stats__block:not(:first-child) {
+    margin-top: 10px;
+}
+.stats__block__title {
+    font-weight: bold;
+}
+
+.stats__block__title, .stats__bloc__text {
+    color: #fff;
+    font-size: 14px;
+}
