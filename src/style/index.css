@@ -2,9 +2,9 @@
 @import 'block.css';
 @import 'city.css';
 @import 'stats.css';
-@import 'grid.css';
 @import 'input.css';
 @import 'helpers.css';
+@import 'loader.css';
 
 * {
     box-sizing: border-box;
@@ -14,6 +14,7 @@ body {
     padding: 0;
     margin: 0;
     color: #697F8A;
+    font-family: 'Roboto', sans-serif;
 }
 
 .wrapper {
@@ -25,5 +26,6 @@ body {
 @media only screen and (max-width: 1199px) {
     .wrapper {
         width: 100%;
+        padding: 1rem;
     }
 }

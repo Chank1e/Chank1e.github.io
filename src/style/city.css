@@ -65,3 +65,18 @@
     box-shadow: 0 1px 5px 0 #a4a4a4;
 }
 
+@media only screen and (max-width: 1099px) {
+    .city_extra__title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .city_extra__temperature {
+        font-size: 18px;
+        font-weight: bolder;
+        background: #697F8A;
+        color: #fff;
+        padding: 3px 5px;
+        border-radius: 3px;
+    }
+}
+

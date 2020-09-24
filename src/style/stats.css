@@ -1,18 +1,18 @@
-.stats__block {
+.stats_block {
     display: flex;
     justify-content: space-between;
     padding: 10px;
     background: #a7afb1;
     border-radius: 5px;
 }
-.stats__block:not(:first-child) {
+.stats_block:not(:first-child) {
     margin-top: 10px;
 }
-.stats__block__title {
+.stats_block__title {
     font-weight: bold;
 }
 
-.stats__block__title, .stats__bloc__text {
+.stats_block__title, .stats_block__text {
     color: #fff;
     font-size: 14px;
 }

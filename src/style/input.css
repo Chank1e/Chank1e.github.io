@@ -20,6 +20,9 @@
     padding: 0 50px 0 10px;
     border-radius: 5px;
 }
+.input_main__form-input>input[disabled] {
+    background: #dedede;
+}
 
 .input_main__form-btn {
     cursor: pointer;
@@ -47,7 +50,7 @@
     }
 
     .input_main__form-input > input[type=text] {
-        padding: 0 120px 0 10px;
+        padding: 0 75px 0 10px;
 
     }
 }

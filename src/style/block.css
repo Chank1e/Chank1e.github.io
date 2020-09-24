@@ -1,3 +1,8 @@
+.block {
+    position: relative;
+    min-height: 200px;
+}
+
 .block_main {
     display: flex;
     justify-content: space-between;
@@ -25,7 +30,6 @@
 @media only screen and (max-width: 1099px) {
     .block_extra__wrapper>.block.block_extra {
         flex: 0 100%;
-        /*demo*/
         box-sizing:border-box;
     }
     .block_extra__wrapper>.block.block_extra:nth-child(2n) {
