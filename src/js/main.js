@@ -24,7 +24,7 @@ function getCardinal(angle) {
 
 class Api {
     constructor() {
-        this.endpoint = 'http://api.openweathermap.org/data/2.5'
+        this.endpoint = 'https://api.openweathermap.org/data/2.5'
     }
 
     weatherByString(str) {
