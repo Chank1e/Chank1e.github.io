@@ -35,6 +35,10 @@ class Api {
         return fetchWeatherGet(`${this.endpoint}/weather?id=${encodeURIComponent(id)}&units=metric`)
     }
 
+    weatherByIds(ids) {
+        return fetchWeatherGet(`${this.endpoint}/group?id=${encodeURIComponent(ids.join(','))}&units=metric`)
+    }
+
     weatherByLatLon({latitude, longitude}) {
         return fetchWeatherGet(`${this.endpoint}/weather?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&units=metric`)
     }
@@ -100,8 +104,9 @@ function saveCityToLS(id) {
 
 function removeCityFromLS(id) {
     let data = JSON.parse(localStorage.getItem('cities') || '[]')
-    localStorage.setItem('cities', JSON.stringify(data.filter(_=>parseInt(_, 10) !== parseInt(id, 10))))
+    localStorage.setItem('cities', JSON.stringify(data.filter(_ => parseInt(_, 10) !== parseInt(id, 10))))
 }
+
 /*END-LS*/
 
 /*MAPPERS*/
@@ -121,6 +126,7 @@ function weatherMapper(obj) {
         ],
     }
 }
+
 /*END-MAPPERS*/
 
 /*RENDER*/
@@ -132,7 +138,7 @@ function renderLoader() {
 }
 
 function renderStats(stats) {
-    if(!stats) return ''
+    if (!stats) return ''
     return stats.map(({title, value}) =>
         `<div class="stats_block">
             <div class="stats_block__title">${title}</div>
@@ -143,7 +149,7 @@ function renderStats(stats) {
 
 function renderBlockMain() {
     blockMain.innerHTML = `
-        ${state.current.loading?renderLoader():''}
+        ${state.current.loading ? renderLoader() : ''}
         <div class="block_main__left">
             <div class="city_full">
                 <div class="city_full__title">
@@ -167,7 +173,7 @@ function renderBlockMain() {
 function renderBlocksExtra() {
     const blocks = state.starred.map(loc => `
         <div class="block block_extra mt-1rem">
-            ${loc.loading?renderLoader():''}
+            ${loc.loading ? renderLoader() : ''}
             <div class="city_extra">
                 <div class="city_extra__title">
                     ${loc.title}
@@ -191,7 +197,7 @@ function renderBlocksExtra() {
     [...document.querySelectorAll('.city_extra__remove')].forEach(it => {
         it.addEventListener('click', () => {
             const id = it.getAttribute('data-id')
-            if(!id) return
+            if (!id) return
             onRemoveClick(id)
         })
     })
@@ -226,8 +232,12 @@ async function initCurrentPosition() {
 }
 
 async function initFromLs() {
-    const lsData = localStorage.getItem('cities')
+    const lsData = JSON.parse(localStorage.getItem('cities') || '[]')
+    if (lsData.length === 0) return
+    const {list} = await api.weatherByIds(lsData)
+    state.starred = [...state.starred, ...list.map(_ => weatherMapper(_))]
 }
+
 /*END-INIT*/
 
 /*HANDLERS*/
@@ -236,13 +246,13 @@ async function onBtnAddClick() {
     inputAdd.disabled = true
     inputAdd.value = 'Загрузка...'
     try {
-        state.starred = [...state.starred, {loading:true}]
+        state.starred = [...state.starred, {loading: true}]
         const data = await api.weatherByString(val)
         state.starred.pop()
-        if(state.starred.map(_=>_.id).includes(data.id)) return alert('Такой город уже есть!')
+        if (state.starred.map(_ => _.id).includes(data.id)) return alert('Такой город уже есть!')
         saveCityToLS(data.id)
         state.starred = [...state.starred, weatherMapper(data)]
-    } catch(err) {
+    } catch (err) {
         state.starred.pop()
         state.starred = [...state.starred]
         alert('Ошибочка(')
@@ -254,9 +264,10 @@ async function onBtnAddClick() {
 
 function onRemoveClick(id) {
     console.log(id)
-    state.starred = state.starred.filter(_=>_.id !== parseInt(id, 10))
+    state.starred = state.starred.filter(_ => _.id !== parseInt(id, 10))
     removeCityFromLS(id)
 }
+
 /*END-HANDLERS*/
 
 async function mainFunc() {
@@ -264,6 +275,7 @@ async function mainFunc() {
     addListener('current', renderBlockMain)
     addListener('starred', renderBlocksExtra)
     initCurrentPosition()
+    initFromLs()
 }
 
 mainFunc()
