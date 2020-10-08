@@ -25,6 +25,7 @@
 }
 
 .input_main__form-btn {
+    border: none;
     cursor: pointer;
     height: 41px;
     width: 41px;
@@ -49,10 +50,27 @@
         justify-content: flex-start;
     }
 
+
     .input_main__form-input > input[type=text] {
         padding: 0 75px 0 10px;
 
     }
 }
+
+@media only screen and (max-width: 499px) {
+    .input_main__form-input > input[type=text] {
+        width: 100%;
+    }
+    .input_main__form {
+        width: 100%;
+        flex-direction: column;
+    }
+    .input_main__form-btn {
+        margin-top: 10px;
+        border-radius: 5px;
+        width: 100%;
+    }
+}
+
 
 

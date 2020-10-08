@@ -1,6 +1,7 @@
 /*FULL*/
 
 .city_full__title {
+    margin:0;
     font-weight: bold;
     font-size: 40px;
 }
@@ -47,6 +48,7 @@
     background: #697F8A;
 }
 .city_extra__remove {
+    border: none;
     cursor: pointer;
     height: 41px;
     width: 41px;

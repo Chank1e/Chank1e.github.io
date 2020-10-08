@@ -1,9 +1,15 @@
+.stats {
+    list-style-type: none;
+    padding:0;
+    margin: 0;
+}
 .stats_block {
     display: flex;
     justify-content: space-between;
     padding: 10px;
     background: #a7afb1;
     border-radius: 5px;
+    margin: 0;
 }
 .stats_block:not(:first-child) {
     margin-top: 10px;

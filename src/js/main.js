@@ -2,10 +2,20 @@ const apikey = 'd1b9e4aebf1311c3832b4a366dfe8604'
 
 const blockMain = document.querySelector('.block_main')
 const blockExtraWrapper = document.querySelector('.block_extra__wrapper')
+const cityExtraTemplate = document.querySelector('#extra-city')
+const cityMainTemplate = document.querySelector('#main-city')
+const statsTemplate = document.querySelector('#stats-block')
+const loaderTemplate = document.querySelector('#loader')
 const btnAdd = document.querySelector('.js-add-btn')
 const inputAdd = document.querySelector('.js-add-input')
 
-const fetchWeatherGet = (url) => fetch(`${url}&appid=${apikey}`).then(res => res.json())
+function fillTemplate(template, values) {
+    return template.replace(/{([^{}]*)}/g, function (a, b) {
+        return values[b];
+    });
+}
+
+const fetchWeatherGet = async (url) => fetch(`${url}&appid=${apikey}`).then(res => res.json())
 
 function getCardinal(angle) {
     const degreePerDirection = 360 / 8;
@@ -111,6 +121,7 @@ function removeCityFromLS(id) {
 
 /*MAPPERS*/
 function weatherMapper(obj) {
+    console.log(obj)
     const {main, name, wind, coord, id} = obj
 
     return {
@@ -131,74 +142,48 @@ function weatherMapper(obj) {
 
 /*RENDER*/
 function renderLoader() {
-    return `
-        <div class="loader">
-            <img src="./src/img/loader.gif">
-        </div>`
+    return loaderTemplate.innerHTML
 }
 
 function renderStats(stats) {
     if (!stats) return ''
-    return stats.map(({title, value}) =>
-        `<div class="stats_block">
-            <div class="stats_block__title">${title}</div>
-            <div class="stats_block__text">${value}</div>
-        </div>
-        `).join('')
+    return stats.map(({title, value}) =>fillTemplate(statsTemplate.innerHTML, {title, value})).join('')
 }
 
 function renderBlockMain() {
-    blockMain.innerHTML = `
-        ${state.current.loading ? renderLoader() : ''}
-        <div class="block_main__left">
-            <div class="city_full">
-                <div class="city_full__title">
-                    ${state.current.title}
-                </div>
-                <div class="city_full__flex">
-                    <div class="city_full__icon"></div>
-                    <div class="city_full__temperature">
-                        ${state.current.temp}°
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="block_main__right">
-            <div class="stats">
-                ${renderStats(state.current.params)}
-            </div>
-        </div>`
+    blockMain.innerHTML = ""
+    const values = {
+        loading: state.current.loading ? renderLoader() : '',
+        title: state.current.title,
+        temp: state.current.temp,
+        stats: renderStats(state.current.params)
+    }
+    const node = cityMainTemplate.cloneNode(true)
+    node.innerHTML = fillTemplate(node.innerHTML, values)
+    const nodeImported = document.importNode(node.content, true)
+    blockMain.appendChild(nodeImported)
 }
 
 function renderBlocksExtra() {
-    const blocks = state.starred.map(loc => `
-        <div class="block block_extra mt-1rem">
-            ${loc.loading ? renderLoader() : ''}
-            <div class="city_extra">
-                <div class="city_extra__title">
-                    ${loc.title}
-                </div>
-                <div class="city_extra__temperature">
-                    ${loc.temp}°
-                </div>
-                <div class="city_extra__icon"></div>
-                <div class="city_extra__remove"
-                    data-id="${loc.id}"
-                >
-                    ✖
-                </div>
-            </div>
-            <div class="stats">
-                ${renderStats(loc.params)}
-            </div>
-            </div>
-    `)
-    blockExtraWrapper.innerHTML = blocks.join('');
+    blockExtraWrapper.innerHTML = ""
+    state.starred.forEach(loc => {
+        const values = {
+            loading: loc.loading ? renderLoader() : '',
+            title: loc.title,
+            temp: loc.temp,
+            id: loc.id,
+            stats: renderStats(loc.params)
+        }
+        const node = cityExtraTemplate.cloneNode(true)
+        node.innerHTML = fillTemplate(node.innerHTML, values)
+        const nodeImported = document.importNode(node.content, true)
+        blockExtraWrapper.appendChild(nodeImported)
+    });
     [...document.querySelectorAll('.city_extra__remove')].forEach(it => {
         it.addEventListener('click', () => {
             const id = it.getAttribute('data-id')
             if (!id) return
-            onRemoveClick(id)
+            onBtnRemoveClick(id)
         })
     })
 }
@@ -248,6 +233,8 @@ async function onBtnAddClick() {
     try {
         state.starred = [...state.starred, {loading: true}]
         const data = await api.weatherByString(val)
+        if (data.cod === '404')
+            throw new Error('not found')
         state.starred.pop()
         if (state.starred.map(_ => _.id).includes(data.id)) return alert('Такой город уже есть!')
         saveCityToLS(data.id)
@@ -262,7 +249,7 @@ async function onBtnAddClick() {
     inputAdd.value = ''
 }
 
-function onRemoveClick(id) {
+function onBtnRemoveClick(id) {
     console.log(id)
     state.starred = state.starred.filter(_ => _.id !== parseInt(id, 10))
     removeCityFromLS(id)
@@ -279,3 +266,10 @@ async function mainFunc() {
 }
 
 mainFunc()
+
+
+// на всю ширину инпут мобильная done!
+// h1-h6 done!
+// main, section done!
+// ul, li done!
+// button где надо

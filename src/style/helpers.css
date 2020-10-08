@@ -11,3 +11,19 @@
 .mr-2rem {
     margin-right: 1rem;
 }
+
+@media only screen and (min-width: 499px) {
+    .mt-2rem-desktop {
+        margin-top: 2rem;
+    }
+    .mt-1rem-desktop {
+        margin-top: 1rem;
+    }
+
+    .mr-1rem-desktop {
+        margin-right: 1rem;
+    }
+    .mr-2rem-desktop {
+        margin-right: 1rem;
+    }
+}
