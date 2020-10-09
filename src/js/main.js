@@ -226,7 +226,8 @@ async function initFromLs() {
 /*END-INIT*/
 
 /*HANDLERS*/
-async function onBtnAddClick() {
+async function onBtnAddClick(e) {
+    e.preventDefault()
     const val = inputAdd.value
     inputAdd.disabled = true
     inputAdd.value = 'Загрузка...'
@@ -236,6 +237,7 @@ async function onBtnAddClick() {
         if (data.cod === '404')
             throw new Error('not found')
         state.starred.pop()
+        state.starred = [...state.starred]
         if (state.starred.map(_ => _.id).includes(data.id)) return alert('Такой город уже есть!')
         saveCityToLS(data.id)
         state.starred = [...state.starred, weatherMapper(data)]
