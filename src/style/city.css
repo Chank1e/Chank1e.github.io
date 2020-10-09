@@ -80,5 +80,8 @@
         padding: 3px 5px;
         border-radius: 3px;
     }
+    .city_full__flex {
+        justify-content: space-between;
+    }
 }
 
