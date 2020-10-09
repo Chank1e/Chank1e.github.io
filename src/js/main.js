@@ -238,6 +238,8 @@ async function onBtnAddClick(e) {
             throw new Error('not found')
         state.starred.pop()
         state.starred = [...state.starred]
+        inputAdd.disabled = false
+        inputAdd.value = ''
         if (state.starred.map(_ => _.id).includes(data.id)) return alert('Такой город уже есть!')
         saveCityToLS(data.id)
         state.starred = [...state.starred, weatherMapper(data)]
