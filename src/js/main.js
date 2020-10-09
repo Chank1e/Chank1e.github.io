@@ -22,8 +22,8 @@ function getCardinal(angle) {
 
     const offsetAngle = angle + degreePerDirection / 2;
 
-    return (offsetAngle >= 0 * degreePerDirection && offsetAngle < 1 * degreePerDirection) ? "Север"
-        : (offsetAngle >= 1 * degreePerDirection && offsetAngle < 2 * degreePerDirection) ? "Северо-Восток"
+    return (offsetAngle >= 0 && offsetAngle < degreePerDirection) ? "Север"
+        : (offsetAngle >= degreePerDirection && offsetAngle < 2 * degreePerDirection) ? "Северо-Восток"
             : (offsetAngle >= 2 * degreePerDirection && offsetAngle < 3 * degreePerDirection) ? "Восток"
                 : (offsetAngle >= 3 * degreePerDirection && offsetAngle < 4 * degreePerDirection) ? "Юго-Восток"
                     : (offsetAngle >= 4 * degreePerDirection && offsetAngle < 5 * degreePerDirection) ? "Юг"
@@ -258,7 +258,7 @@ function onBtnRemoveClick(id) {
 /*END-HANDLERS*/
 
 async function mainFunc() {
-    btnAdd.addEventListener('click', onBtnAddClick)
+    document.querySelector('#form').addEventListener('submit', onBtnAddClick)
     addListener('current', renderBlockMain)
     addListener('starred', renderBlocksExtra)
     initCurrentPosition()
@@ -268,8 +268,6 @@ async function mainFunc() {
 mainFunc()
 
 
-// на всю ширину инпут мобильная done!
-// h1-h6 done!
-// main, section done!
-// ul, li done!
-// button где надо
+// input 100% на мобильную верстку
+// submit on enter input
+

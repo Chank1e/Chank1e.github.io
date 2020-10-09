@@ -67,7 +67,7 @@
     box-shadow: 0 1px 5px 0 #a4a4a4;
 }
 
-@media only screen and (max-width: 1099px) {
+@media only screen and (max-width: 799px) {
     .city_extra__title {
         font-size: 20px;
         font-weight: bold;

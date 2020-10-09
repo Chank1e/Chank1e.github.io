@@ -23,7 +23,7 @@
     color: #55677d;
 }
 
-@media only screen and (max-width: 1099px) {
+@media only screen and (max-width: 799px) {
     .header__refresh {
         display: flex;
         align-items: center;

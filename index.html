@@ -56,17 +56,17 @@
             </div>
         </section>
         <div class="input_main mt-1rem">
-            <div class="input_main__title">
+            <h2 class="input_main__title">
                 Избранное
-            </div>
-            <div class="input_main__form">
+            </h2>
+            <form class="input_main__form" id="form">
                 <div class="input_main__form-input mr-1rem-desktop">
                     <input type="text" placeholder="Добавить новый город" class="js-add-input">
                 </div>
                 <button class="input_main__form-btn js-add-btn">
                     +
                 </button>
-            </div>
+            </form>
         </div>
         <ul class="block_extra__wrapper">
             <!--        <div class="block block_extra mt-1rem">-->
@@ -112,9 +112,9 @@
     <li class="block block_extra mt-1rem">
         {loading}
         <div class="city_extra">
-            <div class="city_extra__title">
+            <h3 class="city_extra__title">
                 {title}
-            </div>
+            </h3>
             <div class="city_extra__temperature">
                 {temp}°
             </div>
@@ -148,9 +148,9 @@
     {loading}
     <div class="block_main__left">
         <div class="city_full">
-            <h3 class="city_full__title">
+            <h2 class="city_full__title">
                 {title}
-            </h3>
+            </h2>
             <div class="city_full__flex">
                 <div class="city_full__icon"></div>
                 <div class="city_full__temperature">
@@ -160,9 +160,9 @@
         </div>
     </div>
     <div class="block_main__right">
-        <div class="stats">
+        <ul class="stats">
             {stats}
-        </div>
+        </ul>
     </div>
 </template>
 

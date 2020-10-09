@@ -30,7 +30,7 @@
 }
 
 
-@media only screen and (max-width: 1099px) {
+@media only screen and (max-width: 799px) {
     .block_extra__wrapper>.block.block_extra {
         flex: 0 100%;
         box-sizing:border-box;
