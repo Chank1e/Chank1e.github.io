@@ -1,5 +1,3 @@
-const apikey = 'd1b9e4aebf1311c3832b4a366dfe8604'
-
 const blockMain = document.querySelector('.block_main')
 const blockExtraWrapper = document.querySelector('.block_extra__wrapper')
 const cityExtraTemplate = document.querySelector('#extra-city')
@@ -14,8 +12,6 @@ function fillTemplate(template, values) {
         return values[b];
     });
 }
-
-const fetchWeatherGet = async (url) => fetch(`${url}&appid=${apikey}`).then(res => res.json())
 
 function getCardinal(angle) {
     const degreePerDirection = 360 / 8;
@@ -34,23 +30,49 @@ function getCardinal(angle) {
 
 class Api {
     constructor() {
-        this.endpoint = 'https://api.openweathermap.org/data/2.5'
+        this.endpoint = 'http://localhost:3000'
     }
 
     weatherByString(str) {
-        return fetchWeatherGet(`${this.endpoint}/weather?q=${encodeURIComponent(str)}&units=metric`)
+        return fetch(`${this.endpoint}/weather/city?q=${encodeURIComponent(str)}`).then(res => res.json())
     }
 
     weatherById(id) {
-        return fetchWeatherGet(`${this.endpoint}/weather?id=${encodeURIComponent(id)}&units=metric`)
-    }
-
-    weatherByIds(ids) {
-        return fetchWeatherGet(`${this.endpoint}/group?id=${encodeURIComponent(ids.join(','))}&units=metric`)
+        return fetch(`${this.endpoint}/weather/city?id=${encodeURIComponent(id)}`).then(res => res.json())
     }
 
     weatherByLatLon({latitude, longitude}) {
-        return fetchWeatherGet(`${this.endpoint}/weather?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}&units=metric`)
+        return fetch(`${this.endpoint}/weather/coordinates?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`).then(res => res.json())
+    }
+
+    saveFavorite(id) {
+        return fetch(`${this.endpoint}/favorites`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id
+            })
+        })
+    }
+
+    getFavorites() {
+        return fetch(`${this.endpoint}/favorites`).then(res => res.json())
+    }
+
+    removeFavorite(id) {
+        return fetch(`${this.endpoint}/favorites`, {
+            method: "DELETE",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id
+            })
+        }).then(res => res.json())
     }
 }
 
@@ -106,16 +128,16 @@ function param(title, value) {
 const api = new Api()
 
 /*LS*/
-function saveCityToLS(id) {
-    let data = JSON.parse(localStorage.getItem('cities') || '[]')
-    data.push(id)
-    localStorage.setItem('cities', JSON.stringify(data))
-}
-
-function removeCityFromLS(id) {
-    let data = JSON.parse(localStorage.getItem('cities') || '[]')
-    localStorage.setItem('cities', JSON.stringify(data.filter(_ => parseInt(_, 10) !== parseInt(id, 10))))
-}
+// function saveCityToLS(id) {
+//     let data = JSON.parse(localStorage.getItem('cities') || '[]')
+//     data.push(id)
+//     localStorage.setItem('cities', JSON.stringify(data))
+// }
+//
+// function removeCityFromLS(id) {
+//     let data = JSON.parse(localStorage.getItem('cities') || '[]')
+//     localStorage.setItem('cities', JSON.stringify(data.filter(_ => parseInt(_, 10) !== parseInt(id, 10))))
+// }
 
 /*END-LS*/
 
@@ -208,7 +230,6 @@ async function initCurrentPosition() {
         const spbid = 498817
         data = await api.weatherById(spbid)
     }
-
     state.current = {
         ...state.current,
         ...weatherMapper(data),
@@ -216,10 +237,8 @@ async function initCurrentPosition() {
     }
 }
 
-async function initFromLs() {
-    const lsData = JSON.parse(localStorage.getItem('cities') || '[]')
-    if (lsData.length === 0) return
-    const {list} = await api.weatherByIds(lsData)
+async function loadFavorites() {
+    const {list} = await api.getFavorites()
     state.starred = [...state.starred, ...list.map(_ => weatherMapper(_))]
 }
 
@@ -241,22 +260,20 @@ async function onBtnAddClick(e) {
         inputAdd.disabled = false
         inputAdd.value = ''
         if (state.starred.map(_ => _.id).includes(data.id)) return alert('Такой город уже есть!')
-        saveCityToLS(data.id)
+        await api.saveFavorite(data.id)
         state.starred = [...state.starred, weatherMapper(data)]
     } catch (err) {
         state.starred.pop()
         state.starred = [...state.starred]
         alert('Ошибочка(')
-        console.error(err)
     }
     inputAdd.disabled = false
     inputAdd.value = ''
 }
 
-function onBtnRemoveClick(id) {
-    console.log(id)
+async function onBtnRemoveClick(id) {
     state.starred = state.starred.filter(_ => _.id !== parseInt(id, 10))
-    removeCityFromLS(id)
+    await api.removeFavorite(id)
 }
 
 /*END-HANDLERS*/
@@ -266,7 +283,7 @@ async function mainFunc() {
     addListener('current', renderBlockMain)
     addListener('starred', renderBlocksExtra)
     initCurrentPosition()
-    initFromLs()
+    loadFavorites()
 }
 
 mainFunc()
