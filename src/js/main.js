@@ -1,3 +1,10 @@
+if(process && process.env.IS_TESTING==="true") {
+    const {html} = require("../../test/dom")
+    document.body.innerHTML = html
+}
+
+
+
 const blockMain = document.querySelector('.block_main')
 const blockExtraWrapper = document.querySelector('.block_extra__wrapper')
 const cityExtraTemplate = document.querySelector('#extra-city')
@@ -6,6 +13,9 @@ const statsTemplate = document.querySelector('#stats-block')
 const loaderTemplate = document.querySelector('#loader')
 const btnAdd = document.querySelector('.js-add-btn')
 const inputAdd = document.querySelector('.js-add-input')
+
+
+
 
 function fillTemplate(template, values) {
     return template.replace(/{([^{}]*)}/g, function (a, b) {
@@ -55,7 +65,7 @@ class Api {
             body: JSON.stringify({
                 id
             })
-        })
+        }).then(res => res.json())
     }
 
     getFavorites() {
@@ -105,9 +115,13 @@ let __state__ = {
     starred: []
 }
 
-const state = wrap(__state__)
+let state = wrap(__state__)
 
 let updateListeners = {}
+
+const setState = newState => {
+    state = newState
+}
 
 function updateHandler(prop) {
     if (Array.isArray(updateListeners[prop]))
@@ -143,7 +157,6 @@ const api = new Api()
 
 /*MAPPERS*/
 function weatherMapper(obj) {
-    console.log(obj)
     const {main, name, wind, coord, id} = obj
 
     return {
@@ -184,6 +197,7 @@ function renderBlockMain() {
     node.innerHTML = fillTemplate(node.innerHTML, values)
     const nodeImported = document.importNode(node.content, true)
     blockMain.appendChild(nodeImported)
+    return blockMain.innerHTML
 }
 
 function renderBlocksExtra() {
@@ -208,6 +222,7 @@ function renderBlocksExtra() {
             onBtnRemoveClick(id)
         })
     })
+    return blockExtraWrapper.innerHTML
 }
 
 /*END-RENDER*/
@@ -286,9 +301,23 @@ async function mainFunc() {
     loadFavorites()
 }
 
-mainFunc()
-
-
-// input 100% на мобильную верстку
-// submit on enter input
+module.exports = {
+    loadFavorites,
+    initCurrentPosition,
+    renderBlockMain,
+    renderBlocksExtra,
+    renderStats,
+    renderLoader,
+    weatherMapper,
+    Api,
+    getCardinal,
+    fillTemplate,
+    getCurrentPositionAsync,
+    wrap,
+    addListener,
+    updateHandler,
+    setState,
+    param,
+    state
+}
 

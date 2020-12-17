@@ -14,7 +14,7 @@ const weatherRouter = express.Router();
 const favoritesRouter = express.Router();
 mongoose.connect('mongodb://localhost:27017/web2020', {useNewUrlParser: true, useUnifiedTopology: true});
 
-const Favorite = mongoose.model('Favorite', { openWeatherId: Number });
+const Favorite = mongoose.model('Favorite', {openWeatherId: Number});
 
 const fetchWeatherGet = async (url) => axios.get(`${url}&appid=${apikey}`)
 
@@ -51,17 +51,17 @@ app.get('/ping', (req, res) => {
 })
 
 weatherRouter.get('/city', async (req, res) => {
-  const { query } = req;
-  const { q, id } = query;
+  const {query} = req;
+  const {q, id} = query;
   try {
     if (q) {
-      const { data } = await $api.weatherByString(q);
+      const {data} = await $api.weatherByString(q);
       return res.json(data);
     } else {
-      const { data } = await $api.weatherById(id);
+      const {data} = await $api.weatherById(id);
       return res.json(data);
     }
-  } catch(err) {
+  } catch (err) {
     res.status(err.response.status || 500).json({
       ...err.response.data
     });
@@ -71,15 +71,15 @@ weatherRouter.get('/city', async (req, res) => {
 })
 
 weatherRouter.get('/coordinates', async (req, res) => {
-  const { query } = req;
-  const { lat, lon } = query;
+  const {query} = req;
+  const {lat, lon} = query;
   try {
-    const { data } = await $api.weatherByLatLon({
+    const {data} = await $api.weatherByLatLon({
       latitude: lat,
       longitude: lon
     });
     return res.json(data);
-  } catch(err) {
+  } catch (err) {
     res.status(err.response.status || 500).json({
       ...err.response.data
     });
@@ -87,14 +87,13 @@ weatherRouter.get('/coordinates', async (req, res) => {
 })
 
 
-
-favoritesRouter.get('/', async (req,res) => {
+favoritesRouter.get('/', async (req, res) => {
   const items = await Favorite.find({})
-  if(items.length === 0) return res.json([])
+  if (items.length === 0) return res.json([])
   try {
-    const { data } = await $api.weatherByIds(items.map(({openWeatherId}) => openWeatherId));
+    const {data} = await $api.weatherByIds(items.map(({openWeatherId}) => openWeatherId));
     return res.json(data);
-  } catch(err) {
+  } catch (err) {
     res.status(err.response.status || 500).json({
       ...err.response.data
     });
@@ -102,8 +101,8 @@ favoritesRouter.get('/', async (req,res) => {
 })
 
 favoritesRouter.post('/', async (req, res) => {
-  const { body } = req;
-  const { id } = body;
+  const {body} = req;
+  const {id} = body;
   const favorite = new Favorite({
     openWeatherId: parseInt(id, 10)
   })
@@ -112,7 +111,7 @@ favoritesRouter.post('/', async (req, res) => {
     return res.json({
       msg: 'success'
     })
-  } catch(err) {
+  } catch (err) {
     res.status(err.response.status || 500).json({
       ...err.response.data
     });
@@ -120,8 +119,8 @@ favoritesRouter.post('/', async (req, res) => {
 })
 
 favoritesRouter.delete('/', async (req, res) => {
-  const { body } = req;
-  const { id } = body;
+  const {body} = req;
+  const {id} = body;
   try {
     await Favorite.deleteOne({
       openWeatherId: id
@@ -129,7 +128,7 @@ favoritesRouter.delete('/', async (req, res) => {
     return res.json({
       msg: 'success'
     })
-  } catch(err) {
+  } catch (err) {
     res.status(err.response.status || 500).json({
       ...err.response.data
     });
@@ -140,6 +139,12 @@ favoritesRouter.delete('/', async (req, res) => {
 app.use('/weather', weatherRouter)
 app.use('/favorites', favoritesRouter)
 
-app.listen(PORT, () => {
-  console.log(`listening on ${PORT}`)
-})
+if (process.env.IS_TESTING !== "true")
+  app.listen(PORT, () => {
+    console.log(`listening on ${PORT}`)
+  })
+
+module.exports = {
+  Api,
+  fetchWeatherGet
+}

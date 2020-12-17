@@ -1,18 +1,12 @@
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+
+const html = `
 <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="./src/style/index.css">
-</head>
-<body onload="mainFunc()">
 <div class="wrapper">
     <header class="header">
         <h1 class="header__title">Погода здесь</h1>
-        <button class="header__refresh" onclick="initCurrentPosition()">
+        <button class="header__refresh">
         </button>
     </header>
     <main>
@@ -69,42 +63,6 @@
             </form>
         </div>
         <ul class="block_extra__wrapper">
-            <!--        <div class="block block_extra mt-1rem">-->
-            <!--            <div class="city_extra">-->
-            <!--                <div class="city_extra__title">-->
-            <!--                    Санкт-Петербург-->
-            <!--                </div>-->
-            <!--                <div class="city_extra__temperature">-->
-            <!--                    +78°-->
-            <!--                </div>-->
-            <!--                <div class="city_extra__icon"></div>-->
-            <!--                <div class="city_extra__remove">-->
-            <!--                    ✖-->
-            <!--                </div>-->
-            <!--            </div>-->
-            <!--            <div class="stats">-->
-            <!--                <div class="stats_block">-->
-            <!--                    <div class="stats_block__title">Ветер</div>-->
-            <!--                    <div class="stats_block__text">Трам-пам</div>-->
-            <!--                </div>-->
-            <!--                <div class="stats_block">-->
-            <!--                    <div class="stats_block__title">Облачность</div>-->
-            <!--                    <div class="stats_block__text">Трам-пам</div>-->
-            <!--                </div>-->
-            <!--                <div class="stats_block">-->
-            <!--                    <div class="stats_block__title">Давление</div>-->
-            <!--                    <div class="stats_block__text">Трам-пам</div>-->
-            <!--                </div>-->
-            <!--                <div class="stats_block">-->
-            <!--                    <div class="stats_block__title">Влажность</div>-->
-            <!--                    <div class="stats_block__text">Трам-пам</div>-->
-            <!--                </div>-->
-            <!--                <div class="stats_block">-->
-            <!--                    <div class="stats_block__title">Координаты</div>-->
-            <!--                    <div class="stats_block__text">Трам-пам</div>-->
-            <!--                </div>-->
-            <!--            </div>-->
-            <!--        </div>-->
         </ul>
     </main>
 </div>
@@ -165,9 +123,11 @@
         </ul>
     </div>
 </template>
+`
 
-<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-
-<script src="./src/js/main.js"></script>
-</body>
-</html>
+const dom = new JSDOM(html)
+// global.document = dom.window.document
+// global.window = dom.window
+const window = dom.window
+const document = window.document
+module.exports = { window, document, html }
