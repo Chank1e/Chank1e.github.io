@@ -251,7 +251,7 @@ describe("Simple tests", () => {
       const data = client.param("1", 2)
       expect(data).toBeInstanceOf(Object)
     })
-    it("should return object", () => {
+    it("should return correct object", () => {
       const data = client.param("1", "123")
       expect(data).toHaveProperty("title", "1")
       expect(data).toHaveProperty("value", "123")
@@ -343,7 +343,7 @@ describe("Simple tests", () => {
       const state = client.getState()
       expect(state.starred).toHaveLength(0)
     })
-    it("should return state with empty favorites", async () => {
+    it("should return state with 2 favorites", async () => {
       global.fetch = mockFetchWithResponse({
         "cnt": 2,
         "list": [{
