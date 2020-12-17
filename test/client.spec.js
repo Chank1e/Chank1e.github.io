@@ -1,7 +1,3 @@
-const {window, document} = require('./dom')
-global.window = window
-global.document = document
-const fetch = require('jest-fetch-mock').enableMocks()
 const client = require('../src/js/main')
 const trimify = str => str.replace(/\s+/g, "")
 
@@ -23,7 +19,8 @@ const weatherObject = () => ({
     pressure: 10,
 
   },
-  name: "ROGACHEV",
+  name: "Rogachev",
+  temp: 1,
   wind: {
     speed: 100,
     angle: 180,
@@ -35,19 +32,13 @@ const weatherObject = () => ({
   id: 10
 })
 
-describe("Position functionality", () => {
-  beforeAll(() => {
-    const positions = {
-      coords: {
-        latitude: '12',
-        longitude: '23',
-      }
-    }
+function mockFetchWithResponse(response) {
+  return () => new Promise(
+    resolve => resolve({json: () => new Promise(res2 => res2(response))})
+  )
+}
 
-    global.navigator.geolocation = {
-      getCurrentPosition: (res, rej, opts) => res(positions),
-    };
-  })
+describe("Position functionality", () => {
   describe("getCardinal()", () => {
 
     it("should return 'Юг' for 180", () => {
@@ -215,7 +206,7 @@ describe("Render functionality", () => {
         <li class="block block_extra mt-1rem">
           <div class="city_extra">
               <h3 class="city_extra__title">
-                  ROGACHEV
+                  Rogachev
               </h3>
               <div class="city_extra__temperature">
                   NaN°
@@ -286,6 +277,118 @@ describe("Simple tests", () => {
       expect(filled).toBe(`<div>1</div>`)
     })
   })
+  describe("initCurrentPosition()", () => {
+    it("should return correct state if position provided(try block)", async () => {
+      global.fetch = mockFetchWithResponse({
+        "coord": {"lon": 23, "lat": 12},
+        "weather": [{"id": 800, "main": "Clear", "description": "clear sky", "icon": "01d"}],
+        "base": "stations",
+        "main": {
+          "temp": 33.85,
+          "feels_like": 28.95,
+          "temp_min": 33.85,
+          "temp_max": 33.85,
+          "pressure": 1009,
+          "humidity": 10,
+          "sea_level": 1009,
+          "grnd_level": 939
+        },
+        "visibility": 10000,
+        "wind": {"speed": 3.77, "deg": 113},
+        "clouds": {"all": 0},
+        "dt": 1608205162,
+        "sys": {"country": "SD", "sunrise": 1608180099, "sunset": 1608221215},
+        "timezone": 7200,
+        "id": 7754689,
+        "name": "Godosgo",
+        "cod": 200
+      })
+      const data = await client.initCurrentPosition()
+      expect(data.current).toHaveProperty("loading", false)
+      expect(data.current).toHaveProperty("title", "Godosgo")
+    })
+    it("should return correct state for saint-peterburg if no position provided(catch block)", async () => {
+      global.fetch = mockFetchWithResponse({
+        "coord": {"lon": 30.26, "lat": 59.89},
+        "weather": [{"id": 804, "main": "Clouds", "description": "overcast clouds", "icon": "04d"}],
+        "base": "stations",
+        "main": {"temp": 1.23, "feels_like": -5.08, "temp_min": 1, "temp_max": 1.67, "pressure": 1018, "humidity": 86},
+        "visibility": 10000,
+        "wind": {"speed": 6, "deg": 300},
+        "clouds": {"all": 90},
+        "dt": 1608205728,
+        "sys": {"type": 1, "id": 8926, "country": "RU", "sunrise": 1608188241, "sunset": 1608209587},
+        "timezone": 10800,
+        "id": 498817,
+        "name": "Saint Petersburg",
+        "cod": 200
+      })
+      global["navigator"] = {
+        geolocation: {
+          getCurrentPosition: (res, rej, opts) => rej(),
+        }
+      }
+      const data = await client.initCurrentPosition()
+      expect(data.current).toHaveProperty("loading", false)
+      expect(data.current).toHaveProperty("title", "Saint Petersburg")
+    })
+  })
+  describe("loadFavorites", () => {
+    beforeEach(() => {
+      client.setState(defaultState())
+    })
+    it("should return state with empty favorites", async () => {
+      global.fetch = mockFetchWithResponse({"cnt": 0, "list": []})
+      await client.loadFavorites()
+      const state = client.getState()
+      expect(state.starred).toHaveLength(0)
+    })
+    it("should return state with empty favorites", async () => {
+      global.fetch = mockFetchWithResponse({
+        "cnt": 2,
+        "list": [{
+          "coord": {"lon": 37.62, "lat": 55.75},
+          "sys": {"country": "RU", "timezone": 10800, "sunrise": 1608184508, "sunset": 1608209786},
+          "weather": [{"id": 500, "main": "Rain", "description": "light rain", "icon": "10d"}],
+          "main": {
+            "temp": 1.97,
+            "feels_like": -3.37,
+            "temp_min": 1.67,
+            "temp_max": 2.22,
+            "pressure": 1018,
+            "humidity": 93
+          },
+          "visibility": 10000,
+          "wind": {"speed": 5, "deg": 260},
+          "clouds": {"all": 75},
+          "dt": 1608203220,
+          "id": 524901,
+          "name": "Moscow"
+        }, {
+          "coord": {"lon": -0.13, "lat": 51.51},
+          "sys": {"country": "GB", "timezone": 0, "sunrise": 1608192099, "sunset": 1608220321},
+          "weather": [{"id": 800, "main": "Clear", "description": "clear sky", "icon": "01d"}],
+          "main": {
+            "temp": 9.55,
+            "feels_like": 5.31,
+            "temp_min": 7.78,
+            "temp_max": 10.56,
+            "pressure": 1015,
+            "humidity": 76
+          },
+          "visibility": 10000,
+          "wind": {"speed": 4.6, "deg": 240},
+          "clouds": {"all": 0},
+          "dt": 1608203376,
+          "id": 2643743,
+          "name": "London"
+        }]
+      })
+      await client.loadFavorites()
+      const state = client.getState()
+      expect(state.starred).toHaveLength(2)
+    })
+  })
 })
 
 const $api = new client.Api()
@@ -336,5 +439,30 @@ describe("Api()", () => {
     expect(options.headers).toHaveProperty('Accept', 'application/json')
     expect(options.headers).toHaveProperty('Content-Type', 'application/json')
     expect(options).toHaveProperty('body', JSON.stringify({id}))
+  })
+})
+
+describe("BTN clicks", () => {
+  describe("onBtnAddClick()", () => {
+    it("should preventDefault", () => {
+      const prevent = jest.fn()
+      client.onBtnAddClick({preventDefault: prevent})
+      expect(prevent).toBeCalledTimes(1)
+    })
+    it("should not change state if response is 404", () => {
+      global.fetch = mockFetchWithResponse({cod: "404"})
+      const stateBeforeClick = client.getState()
+      client.onBtnAddClick({preventDefault: jest.fn()})
+      expect(stateBeforeClick).toBe(client.getState())
+    })
+  })
+  describe("onBtnRemoveClick()", () => {
+    it("should remove starred", () => {
+      client.setState({...defaultState(), starred: [{id: 1}]})
+      expect(client.getState().starred).toHaveLength(1)
+      global.fetch = mockFetchWithResponse({})
+      client.onBtnRemoveClick(1)
+      expect(client.getState().starred).toHaveLength(0)
+    })
   })
 })

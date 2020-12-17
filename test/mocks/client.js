@@ -2,7 +2,6 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
 const html = `
-<!doctype html>
 <div class="wrapper">
     <header class="header">
         <h1 class="header__title">Погода здесь</h1>
@@ -124,10 +123,21 @@ const html = `
     </div>
 </template>
 `
-
 const dom = new JSDOM(html)
-// global.document = dom.window.document
-// global.window = dom.window
-const window = dom.window
-const document = window.document
-module.exports = { window, document, html }
+
+global["window"] = dom.window
+global["document"] = dom.window.document
+const positions = {
+  coords: {
+    latitude: '12',
+    longitude: '23',
+  }
+}
+
+global["navigator"] = {
+  geolocation:{
+    getCurrentPosition: (res, rej, opts) => res(positions),
+  }
+}
+
+global["alert"] = (msg) => console.info(msg)

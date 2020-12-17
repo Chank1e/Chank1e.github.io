@@ -1,10 +1,3 @@
-if(process && process.env.IS_TESTING==="true") {
-    const {html} = require("../../test/dom")
-    document.body.innerHTML = html
-}
-
-
-
 const blockMain = document.querySelector('.block_main')
 const blockExtraWrapper = document.querySelector('.block_extra__wrapper')
 const cityExtraTemplate = document.querySelector('#extra-city')
@@ -122,6 +115,8 @@ let updateListeners = {}
 const setState = newState => {
     state = newState
 }
+
+const getState = () => state
 
 function updateHandler(prop) {
     if (Array.isArray(updateListeners[prop]))
@@ -250,11 +245,13 @@ async function initCurrentPosition() {
         ...weatherMapper(data),
         loading: false
     }
+    return state
 }
 
 async function loadFavorites() {
     const {list} = await api.getFavorites()
     state.starred = [...state.starred, ...list.map(_ => weatherMapper(_))]
+    return state
 }
 
 /*END-INIT*/
@@ -318,6 +315,9 @@ module.exports = {
     updateHandler,
     setState,
     param,
-    state
+    state,
+    getState,
+    onBtnAddClick,
+    onBtnRemoveClick,
 }
 
